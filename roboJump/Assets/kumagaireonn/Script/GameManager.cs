@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+
+    //プレイヤー０のところにプレイヤー１に以降
     //ゲームステート
     public enum States//列挙型
     {

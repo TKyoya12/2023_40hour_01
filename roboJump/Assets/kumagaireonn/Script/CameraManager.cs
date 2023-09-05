@@ -1,83 +1,82 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Unity.VisualScripting;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
+using static UnityEditor.PlayerSettings;
 
 public class CameraManager : MonoBehaviour
 {
-    public GameObject target;                      // 追従する対象を決める変数
-    [SerializeField] GameObject newPlayer;         // ボタンを押した時の追従する対象
-    [SerializeField] private float CameraSpeed = 0.25f;                       //カメラスピード
-    bool isChange = false;                          //追従しているかfalse;していない.true;している
-    Vector3 postposition;           // 移動後位置
-    Vector3 pos;                                  // カメラの初期位置を記憶するための変数
 
-    float rd = 0;
-    Vector3 cameraPos = Vector3.zero;
+
+    bool isPlaPos = false;
+
+    [SerializeField] Transform playerTr;          // プレイヤーのTransform
+    [SerializeField] Transform newPlayer;         // ボタンを押した時の追従する対象
+    [SerializeField] public float Speed = 1.0F;
+    [SerializeField] Vector3 cameraOrgPos = new Vector3(0, 0, -10f); // カメラの初期位置位置 
+    [SerializeField] Vector2 camaraMaxPos = new Vector2(5, 5); // カメラの右上限界座標
+    [SerializeField] Vector2 camaraMinPos = new Vector2(-5, -5); // カメラの左下限界座標
+
+    //二点間の距離を入れる
+    private float distance_two;
 
     void Start()
     {
-      
+        //二点間の距離を代入(スピード調整に使う)
+        distance_two = Vector3.Distance(playerTr.position, newPlayer.position);
+     
     }
 
-    void Update()
+    void LateUpdate()
     {
+        Vector3 playerPos = playerTr.position; // プレイヤーの位置
+        Vector3 newPlayPos = newPlayer.position;//追従が変わったときの位置
+        Vector3 camPos = transform.position; // カメラの位置
 
-        if (!isChange)//false
+        
+
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            cameraPos = target.transform.position; // cameraPosという変数を作り、追従する対象の位置を入れる
-            Debug.Log(isChange);
+
+            isPlaPos =true;
+            Debug.Log("Q");
         }
 
-        //else//true
-        //{
-        //Camera.main.gameObject.transform.position. = cameraPos; //　カメラの位置に変数cameraPosの位置を入れる
+        if (!isPlaPos) { 
+        // 滑らかにプレイヤーの場所に追従
+        camPos = Vector3.Lerp(transform.position, playerPos + cameraOrgPos, 3.0f);
 
-        transform.position = Vector3.Lerp(cameraPos,
-            target.transform.position,
-            0.5f);//Lerp(最初の位置、最後の位置、速度)
-        Debug.Log("transform.position");
-        Debug.Log(transform.position);
-        rd = Vector3.Distance(new Vector3(target.transform.position.y,
-                target.transform.position.x,
-                0.0f),
-              new Vector3(cameraPos.y, cameraPos.x, 0.0f));//三平方の定理
+        // カメラの位置を制限
+        camPos.x = Mathf.Clamp(camPos.x, camaraMinPos.x, camaraMaxPos.x);
+        camPos.y = Mathf.Clamp(camPos.y, camaraMinPos.y, camaraMaxPos.y);
+        camPos.z = -10f;
+        transform.position = camPos;
+            Debug.Log(isPlaPos);
+        }
+        else
+        {
+            // 滑らかにプレイヤーの場所に追従
+            camPos = Vector3.Lerp(transform.position, newPlayPos + cameraOrgPos, 3.0f);
 
+            // カメラの位置を制限
+            camPos.x = Mathf.Clamp(camPos.x, camaraMinPos.x, camaraMaxPos.x);
+            camPos.y = Mathf.Clamp(camPos.y, camaraMinPos.y, camaraMaxPos.y);
+            camPos.z = -10f;
+            transform.position = camPos;
+            Debug.Log(isPlaPos);
 
-        //    Debug.Log(isChange=true);
-        //    Debug.Log("Distance");
-        //    Debug.Log(Vector3.Distance(new Vector3(target.transform.position.y,
-        //        target.transform.position.x,
-        //        0.0f),
-        //       new Vector3(cameraPos.y, cameraPos.x, 0.0f)));
-        //    if (rd <= 10)//最後位置と現在地が０．０１以下の時
-        //    {
-        //        isChange = false;
-        //        Debug.Log("aaaa");
-        //        Debug.Log(isChange=false);
-        //    }
+            // 現在の位置
+            float present_Location = (Time.time * Speed) / distance_two;
 
-        //}
+            // オブジェクトの移動
+            transform.position = Vector3.Lerp(playerTr.position, newPlayer.position, present_Location);
+            this.transform.position =
+                new Vector3(
+                    this.transform.position.x,
+                this.transform.position.y,
+                -10f);
+        }
 
+    }  
+    
 
-
-        cameraPos.y = target.transform.position.y;   // カメラの縦位置に対象の位置を入れる
-        //Debug.Log("cameraPos.y");
-        //Debug.Log(cameraPos.y);
-
-        cameraPos.z = -10; // カメラの奥行きの位置に-10を入れる
-        //Debug.Log("cameraPos.z");
-        //Debug.Log(cameraPos.z);
-       
-
-        //Qキーを押したら変更
-        //if (Input.GetKeyDown(KeyCode.Q))
-        //{
-        //    target = newPlayer;//Targetの中をnewPlayerにする
-        //    isChange = true;
-        //    Debug.Log("Q");
-        //}
-    }
 }

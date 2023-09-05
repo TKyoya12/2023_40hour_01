@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
 
+    [SerializeField] GameObject Player0;
+
     //インスペクタ表示変数
     [SerializeField] private float moveSpeed; //移動力
 
@@ -24,8 +26,6 @@ public class PlayerMove : MonoBehaviour
     //プライベート変数
     private Direction direction = Direction.Stop;     //プレイヤーの方向
     private float speed;                                //スピード
-
-
 
 
     // Start is called before the first frame update
@@ -90,14 +90,11 @@ public class PlayerMove : MonoBehaviour
                 transform.localScale = new Vector3(1f, 1f, 1f);
                 break;
         }
+
         //物理加速度
         rigid2D.velocity = new Vector2(speed, rigid2D.velocity.y);
 
     }
 
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
 }
