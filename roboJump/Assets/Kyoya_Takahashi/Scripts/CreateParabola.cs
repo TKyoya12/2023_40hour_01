@@ -17,7 +17,7 @@ public class CreateParabola : MonoBehaviour
     float throwAngle = 0;
     void Start()
     {
-        
+        cam = GetComponent<Camera>();
     }
 
     // Update is called once per frame
