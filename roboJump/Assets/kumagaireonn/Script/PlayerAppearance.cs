@@ -1,18 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.AI;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class PlayerAppearance : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+   // インスタンス化するPrefabオブジェクトをアサインします。
+    public GameObject prefab;
 
-    // Update is called once per frame
-    void Update()
+    GameObject obj;
+
+    // 親オブジェクトのトランスフォームをアサインします。
+    public Transform parentTran;
+
+    // ゲームオブジェクトを生成する数を指定します。
+    public int prefabNum;
+    private void Start()
     {
-        
+        obj.transform.SetParent(parentTran);//objectの親オブジェクトをparent.transformにしている
     }
 }
