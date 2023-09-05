@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    //[SerializeField] private GameObject gameOverTest;
+    [SerializeField] private GameObject gameOverTest;
     [SerializeField] private GameObject gameClearTest;
     [SerializeField] private GameObject pauseCanvas;
 
 
     private void Start()
     {
-       // gameOverTest.SetActive(false);
+        gameOverTest.SetActive(false);
         gameClearTest.SetActive(false);
         pauseCanvas.SetActive(false);
 
@@ -41,12 +41,12 @@ public class UIController : MonoBehaviour
             //        gameOverTest.SetActive(true);
             //    }
             //    break;
-            //case GameManager.States.GameClear:
-            //    //ゲームクリアUI テキストを表示
-            //    if (!gameOverTest.activeSelf)
-            //    {
-            //        gameClearTest.SetActive(true);
-            //    }
+            case GameManager.States.GameClear:
+                //ゲームクリアUI テキストを表示
+                if (!gameOverTest.activeSelf)
+                {
+                    gameClearTest.SetActive(true);
+                }
                 break;
         }
     }
