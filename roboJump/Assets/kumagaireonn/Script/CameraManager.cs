@@ -26,20 +26,12 @@ public class CameraManager : MonoBehaviour
      
     }
 
-    void LateUpdate()
+    void Update()
     {
         Vector3 playerPos = playerTr.position; // プレイヤーの位置
         Vector3 newPlayPos = newPlayer.position;//追従が変わったときの位置
         Vector3 camPos = transform.position; // カメラの位置
 
-        
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-
-            isPlaPos =true;
-            Debug.Log("Q");
-        }
 
         if (!isPlaPos) { 
         // 滑らかにプレイヤーの場所に追従
@@ -50,7 +42,7 @@ public class CameraManager : MonoBehaviour
         camPos.y = Mathf.Clamp(camPos.y, camaraMinPos.y, camaraMaxPos.y);
         camPos.z = -10f;
         transform.position = camPos;
-            Debug.Log(isPlaPos);
+           // Debug.Log(isPlaPos);
         }
         else
         {
@@ -62,7 +54,7 @@ public class CameraManager : MonoBehaviour
             camPos.y = Mathf.Clamp(camPos.y, camaraMinPos.y, camaraMaxPos.y);
             camPos.z = -10f;
             transform.position = camPos;
-            Debug.Log(isPlaPos);
+           // Debug.Log(isPlaPos);
 
             // 現在の位置
             float present_Location = (Time.time * Speed) / distance_two;
@@ -76,7 +68,14 @@ public class CameraManager : MonoBehaviour
                 -10f);
         }
 
-    }  
-    
+    }
+    private void LateUpdate()
+    {
+        if (PlayerThrow.isThrow)
+        {
+            isPlaPos = true;
+            PlayerThrow.isThrow = false;
+        }
+    }
 
 }

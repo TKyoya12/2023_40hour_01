@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 
 public class PlayerAppearance : MonoBehaviour
 {
-    PlayerMove pmove;
+    MoveManeger MoveMane;
 
    // インスタンス化するobjオブジェクトをアサインします。
     public  GameObject obj;
@@ -27,7 +27,7 @@ public class PlayerAppearance : MonoBehaviour
     {
        if(Input.GetKeyDown(KeyCode.Z))
         {
-            pmove=GameObject.Find("Playr").GetComponent<PlayerMove>();//スクリプトから他のGameObjectにアタッチされたスクリプトを取得する
+            MoveMane = GameObject.Find("Playr").GetComponent<MoveManeger>();//スクリプトから他のGameObjectにアタッチされたスクリプトを取得する
             //prefab = rigid2D.velocity;
         }
     }

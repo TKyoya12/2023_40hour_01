@@ -9,8 +9,6 @@ public class MoveManeger : MonoBehaviour
     [SerializeField] private float moveSpeed; //移動力
 
 
-
-    //private CharacterController characterController;
      bool isActive = false;//操作されているかどうか/false;していない/true:している
     private enum Direction
     {
@@ -23,20 +21,29 @@ public class MoveManeger : MonoBehaviour
     private int nowChara;
     //　操作可能なゲームキャラクター
     [SerializeField]
-    private List<GameObject> charaList;
+    public static List<GameObject> charaList = new List<GameObject>();
     public static GameObject ThrowObject;
-
+    public int PlayerIndx = -1;
 
     //コンポーネント保存
     private Rigidbody2D rigid2D;
     //　現在キャラクターを操作出来るかどうか
     private bool control;
 
+
     //プライベート変数
     private Direction direction = Direction.Stop;     //プレイヤーの方向
     private float speed;                                //スピード
 
+    private int thisIndx = -1;
     //初期化に使用します
+
+    private void Awake()
+    {
+        charaList.Add(gameObject);
+
+        thisIndx = charaList.Count - 1;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -44,28 +51,25 @@ public class MoveManeger : MonoBehaviour
         //コンポーネント取得
         rigid2D = GetComponent<Rigidbody2D>();
         //　最初の操作キャラクターを0番目のキャラクターにする
-        // charaList[0].GetComponent<>();
-
-
-        ChangeControl(false);
+        PlayerIndx = GameObject.Find("Player").GetComponent<MoveManeger>().thisIndx;
+        
+            charaList[PlayerIndx].GetComponent<MoveManeger>().ChangeControl(true);
+        
     }
-
-
-
 
     // Update is called once per frame
     void Update()
     {
+      
+        if (!control)
+        {
+            return;
+        }
 
-        //　Zキーが押されたら操作キャラクターを次のキャラクターに変更する
-        if (Input.GetKeyDown("z"))
+        
+        if (PlayerThrow.isThrow)
         {
             ChangeCharacter(nowChara);
-            isActive = true;
-            Debug.Log("Z"+isActive);
-            AllFalseControl(nowChara);
-            Debug.Log(nowChara);
-
         }
         float inputH = 0;
 
@@ -89,13 +93,7 @@ public class MoveManeger : MonoBehaviour
             //止まっている
             direction = Direction.Stop;
         }
-        // Debug.Log(direction);
-        //if(isActive)//していない
-        //{
-
-        //    Debug.Log(isActive);
-        //}
-    
+  
     }
     private void FixedUpdate()
     {
@@ -123,35 +121,36 @@ public class MoveManeger : MonoBehaviour
     }
     public void ChangeControl(bool controlFlag)
     {
-        control = false;
+        control = controlFlag;
 
     }
     //　操作キャラクター変更メソッド
     void ChangeCharacter(int tempNowChara)
     {
-        //AllFalseControl(tempNowChara);
-        // ChangeControl(true);
-        charaList[tempNowChara].GetComponent<MoveManeger>();
         //　現在操作しているキャラクターを動かなくする
-        //charaList[tempNowChara].GetComponent<PlayerMove>().ChangeControl(false);
-       
+        charaList[tempNowChara].GetComponent<MoveManeger>();
 
+
+        // nextPlayer.GetComponent<MoveManeger>(); 
         //　次のキャラクターの番号を設定
-        var nextChara = tempNowChara + 1;
-        if (nextChara >= charaList.Count)
-        {
-            nextChara = 0;
-        }
-        //　次のキャラクターを動かせるようにする
-      if(nextChara < charaList.Count)
-        {
-            isActive = false;
-        }
+        PlayerIndx = PlayerThrow.nextPlayer.GetComponent< MoveManeger>().thisIndx;
+
+        // 
+        //  var nextChara = tempNowChara + 1;
+        //  if (nextChara >= charaList.Count)
+        //  {
+        //      nextChara = 0;
+        //  }
+        //  //　次のキャラクターを動かせるようにする
+        //if(nextChara < charaList.Count)
+        //  {
+        //      isActive = false;
+        //  }
 
         //　現在のキャラクター番号を保持する
-        nowChara = nextChara;
+        //   nowChara = nextChara;
 
-        AllFalseControl(nowChara);
+        AllFalseControl(PlayerIndx);
     }
 
     void AllFalseControl(int tempNowChara)
@@ -164,7 +163,6 @@ public class MoveManeger : MonoBehaviour
                 continue;
             }
                 
-       
         charaList[i].GetComponent<MoveManeger>().ChangeControl(false);
         }
     }

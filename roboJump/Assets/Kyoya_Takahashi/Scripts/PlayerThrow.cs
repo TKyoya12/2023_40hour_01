@@ -14,9 +14,11 @@ public class PlayerThrow : MonoBehaviour
     bool canPick = false;                       //拾える状態か？
     bool isTake = false;                        //持ってる状態か
 
+    public static bool isThrow = false;
+
     Vector2 diffFriend = new Vector2(0.0f, 1.3f);
 
-    GameObject friend = null;                   //投げるオブジェクト 
+   public static GameObject nextPlayer = null;                   //投げるオブジェクト 
 
     private void Start()
     {
@@ -34,7 +36,8 @@ public class PlayerThrow : MonoBehaviour
                 return;
             }
             isTake = false;
-            Rigidbody2D rigidbody2 = friend.GetComponent<Rigidbody2D>();
+            isThrow = true;
+            Rigidbody2D rigidbody2 = nextPlayer.GetComponent<Rigidbody2D>();
             throwDirection();
             rigidbody2.velocity = direction * power;
         }
@@ -49,7 +52,7 @@ public class PlayerThrow : MonoBehaviour
         }
         if (isTake)
         {
-            friend.transform.position = new Vector2(
+            nextPlayer.transform.position = new Vector2(
                 this.gameObject.transform.position.x + diffFriend.x,
                 this.gameObject.transform.position.y + diffFriend.y);
         }
@@ -60,7 +63,7 @@ public class PlayerThrow : MonoBehaviour
         if (collision.gameObject.CompareTag("CanThrow"))
         {
             canPick = true;
-            friend = collision.gameObject;
+            nextPlayer = collision.gameObject;
         }
         else
         {

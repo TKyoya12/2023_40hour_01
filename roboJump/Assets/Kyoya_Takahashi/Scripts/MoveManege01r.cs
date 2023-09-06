@@ -51,8 +51,6 @@ public class MoveManege01 : MonoBehaviour
     }
 
 
-
-
     // Update is called once per frame
     void Update()
     {
@@ -119,7 +117,7 @@ public class MoveManege01 : MonoBehaviour
     void ChangeCharacter(int tempNowChara)
     {
 
-        charaList[tempNowChara].GetComponent<PlayerMove>();
+        charaList[tempNowChara].GetComponent<MoveManeger>();
         //　現在操作しているキャラクターを動かなくする
         //charaList[tempNowChara].GetComponent<PlayerMove>().ChangeControl(false);
         ChangeControl(false);
@@ -131,7 +129,7 @@ public class MoveManege01 : MonoBehaviour
             nextChara = 0;
         }
         //　次のキャラクターを動かせるようにする
-        charaList[nextChara].GetComponent<PlayerMove>().ChangeControl(true);
+        charaList[nextChara].GetComponent<MoveManeger>().ChangeControl(true);
         ChangeControl(true);
 
         //　現在のキャラクター番号を保持する
