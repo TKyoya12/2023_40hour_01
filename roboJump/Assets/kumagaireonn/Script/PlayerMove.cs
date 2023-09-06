@@ -9,9 +9,9 @@ public class PlayerMove : MonoBehaviour
 
     //インスペクタ表示変数
     [SerializeField] private float moveSpeed; //移動力
-   
-    
-    
+
+
+
     //private CharacterController characterController;
 
     private enum Direction
@@ -33,8 +33,8 @@ public class PlayerMove : MonoBehaviour
     private Direction direction = Direction.Stop;     //プレイヤーの方向
     private float speed;                                //スピード
 
- //初期化に使用します
-    
+    //初期化に使用します
+
     // Start is called before the first frame update
     void Start()
     {

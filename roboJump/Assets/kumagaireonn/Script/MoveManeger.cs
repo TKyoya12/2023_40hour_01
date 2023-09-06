@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class MoveManeger : MonoBehaviour
@@ -10,15 +11,14 @@ public class MoveManeger : MonoBehaviour
 
 
     //private CharacterController characterController;
-    // bool isActive = false;//操作されているかどうか/false;していない/true:している
+     bool isActive = false;//操作されているかどうか/false;していない/true:している
     private enum Direction
     {
         Stop,   //止まっている
         Right,  //右を向いている
         Left,   //左を向いている
     }
-    //private PlayerMove playermove;//別スプデータを取る
-
+    
     //　現在どのキャラクターを操作しているか
     private int nowChara;
     //　操作可能なゲームキャラクター
@@ -57,11 +57,16 @@ public class MoveManeger : MonoBehaviour
     void Update()
     {
 
-        ////　Zキーが押されたら操作キャラクターを次のキャラクターに変更する
-        //if (Input.GetKeyDown("z"))
-        //{
-        //    ChangeCharacter(nowChara);
-        //}
+        //　Zキーが押されたら操作キャラクターを次のキャラクターに変更する
+        if (Input.GetKeyDown("z"))
+        {
+            ChangeCharacter(nowChara);
+            isActive = true;
+            Debug.Log("Z"+isActive);
+            AllFalseControl(nowChara);
+            Debug.Log(nowChara);
+
+        }
         float inputH = 0;
 
         //左右方向キー入力を取得
@@ -85,6 +90,12 @@ public class MoveManeger : MonoBehaviour
             direction = Direction.Stop;
         }
         // Debug.Log(direction);
+        //if(isActive)//していない
+        //{
+
+        //    Debug.Log(isActive);
+        //}
+    
     }
     private void FixedUpdate()
     {
@@ -118,11 +129,12 @@ public class MoveManeger : MonoBehaviour
     //　操作キャラクター変更メソッド
     void ChangeCharacter(int tempNowChara)
     {
-
-        charaList[tempNowChara].GetComponent<PlayerMove>();
+        //AllFalseControl(tempNowChara);
+        // ChangeControl(true);
+        charaList[tempNowChara].GetComponent<MoveManeger>();
         //　現在操作しているキャラクターを動かなくする
         //charaList[tempNowChara].GetComponent<PlayerMove>().ChangeControl(false);
-        ChangeControl(false);
+       
 
         //　次のキャラクターの番号を設定
         var nextChara = tempNowChara + 1;
@@ -131,13 +143,32 @@ public class MoveManeger : MonoBehaviour
             nextChara = 0;
         }
         //　次のキャラクターを動かせるようにする
-        charaList[nextChara].GetComponent<PlayerMove>().ChangeControl(true);
-        ChangeControl(true);
+      if(nextChara < charaList.Count)
+        {
+            isActive = false;
+        }
 
         //　現在のキャラクター番号を保持する
         nowChara = nextChara;
 
-
+        AllFalseControl(nowChara);
     }
+
+    void AllFalseControl(int tempNowChara)
+    {
+        for(int i=0;i<charaList.Count; i++)
+        {
+            if (i == tempNowChara)
+            {
+                charaList[i].GetComponent<MoveManeger>().ChangeControl(true);
+                continue;
+            }
+                
+       
+        charaList[i].GetComponent<MoveManeger>().ChangeControl(false);
+        }
+    }
+    
+
 
 }

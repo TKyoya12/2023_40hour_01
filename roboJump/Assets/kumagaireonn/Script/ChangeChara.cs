@@ -6,8 +6,8 @@ using UnityEngine;
 
 
 public class ChangeChara : MonoBehaviour
-{ 
- private PlayerMove playermove;//別スプデータを取る
+{
+    private PlayerMove playermove;//別スプデータを取る
     //　現在どのキャラクターを操作しているか
     private int nowChara;
     //　操作可能なゲームキャラクター
@@ -15,14 +15,14 @@ public class ChangeChara : MonoBehaviour
     private List<GameObject> charaList;
 
 
-   
+
 
     void Start()
     {
         //　最初の操作キャラクターを0番目のキャラクターにする
         playermove = charaList[0].GetComponent<PlayerMove>();
 
-        
+
         playermove.ChangeControl(false);
     }
 
@@ -42,7 +42,7 @@ public class ChangeChara : MonoBehaviour
         //　現在操作しているキャラクターを動かなくする
         //charaList[tempNowChara].GetComponent<PlayerMove>().ChangeControl(false);
         playermove.ChangeControl(false);
-     
+
         //　次のキャラクターの番号を設定
         var nextChara = tempNowChara + 1;
         if (nextChara >= charaList.Count)
@@ -52,9 +52,9 @@ public class ChangeChara : MonoBehaviour
         //　次のキャラクターを動かせるようにする
         //charaList[nextChara].GetComponent<PlayerMove>().ChangeControl(true);
         playermove.ChangeControl(true);
-        
+
         //　現在のキャラクター番号を保持する
         nowChara = nextChara;
-    
+
     }
 }
