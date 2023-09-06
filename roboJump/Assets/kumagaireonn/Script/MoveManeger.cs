@@ -49,7 +49,7 @@ public class MoveManeger : MonoBehaviour
     bool canPick = false;                       //拾える状態か？
     bool isTake = false;                        //持ってる状態か
 
-    public static bool isThrow = false;
+    public static bool isThrow = false;         //投げたか？
 
     Vector2 diffFriend = new Vector2(0.0f, 1.3f);
 
@@ -90,8 +90,11 @@ public class MoveManeger : MonoBehaviour
         if (isThrow)
         {
             ChangeCharacter(nowChara);
+            Debug.Log(isThrow);
         }
         float inputH = 0;
+
+       
 
         //左右方向キー入力を取得
         inputH = Input.GetAxisRaw("Horizontal");
@@ -213,13 +216,13 @@ public class MoveManeger : MonoBehaviour
             }
             isTake = true;
             canPick = false;
+            Debug.Log(isThrow);
         }
         if (isTake)
         {
             nextPlayer.transform.position = new Vector2(
                 this.gameObject.transform.position.x + diffFriend.x,
                 this.gameObject.transform.position.y + diffFriend.y);
-           
         }
 
         Debug.Log(canPick);
