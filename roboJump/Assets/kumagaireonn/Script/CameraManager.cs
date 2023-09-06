@@ -71,10 +71,10 @@ public class CameraManager : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (PlayerThrow.isThrow)
+        if (MoveManeger.isThrow)
         {
             isPlaPos = true;
-            PlayerThrow.isThrow = false;
+            MoveManeger.isThrow = false;
         }
     }
 

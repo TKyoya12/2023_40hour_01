@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.LowLevel;
 
 public class MoveManeger : MonoBehaviour
 {
@@ -38,6 +40,21 @@ public class MoveManeger : MonoBehaviour
     private int thisIndx = -1;
     //初期化に使用します
 
+
+    // Forceでキューブを動かすスクリプト
+    Rigidbody2D rb;
+    float power = 10.0f;                         //投げる強さ
+    Vector2 throwDirection = new Vector2(0.5f, 0.5f); //投げる向き
+
+    bool canPick = false;                       //拾える状態か？
+    bool isTake = false;                        //持ってる状態か
+
+    public static bool isThrow = false;
+
+    Vector2 diffFriend = new Vector2(0.0f, 1.3f);
+
+    public static GameObject nextPlayer = null;                   //投げるオブジェクト 
+
     private void Awake()
     {
         charaList.Add(gameObject);
@@ -54,7 +71,9 @@ public class MoveManeger : MonoBehaviour
         PlayerIndx = GameObject.Find("Player").GetComponent<MoveManeger>().thisIndx;
         
             charaList[PlayerIndx].GetComponent<MoveManeger>().ChangeControl(true);
-        
+        // Rigidbodyコンポーネントを取得する
+        rb = GetComponent<Rigidbody2D>();
+        rb.velocity = Vector3.zero;//速度
     }
 
     // Update is called once per frame
@@ -66,8 +85,9 @@ public class MoveManeger : MonoBehaviour
             return;
         }
 
-        
-        if (PlayerThrow.isThrow)
+        PlayerThrowUpdate();
+        Debug.Log(nextPlayer);
+        if (isThrow)
         {
             ChangeCharacter(nowChara);
         }
@@ -131,24 +151,9 @@ public class MoveManeger : MonoBehaviour
         charaList[tempNowChara].GetComponent<MoveManeger>();
 
 
-        // nextPlayer.GetComponent<MoveManeger>(); 
+      
         //　次のキャラクターの番号を設定
-        PlayerIndx = PlayerThrow.nextPlayer.GetComponent< MoveManeger>().thisIndx;
-
-        // 
-        //  var nextChara = tempNowChara + 1;
-        //  if (nextChara >= charaList.Count)
-        //  {
-        //      nextChara = 0;
-        //  }
-        //  //　次のキャラクターを動かせるようにする
-        //if(nextChara < charaList.Count)
-        //  {
-        //      isActive = false;
-        //  }
-
-        //　現在のキャラクター番号を保持する
-        //   nowChara = nextChara;
+        PlayerIndx = nextPlayer.GetComponent< MoveManeger>().thisIndx;
 
         AllFalseControl(PlayerIndx);
     }
@@ -166,7 +171,82 @@ public class MoveManeger : MonoBehaviour
         charaList[i].GetComponent<MoveManeger>().ChangeControl(false);
         }
     }
-    
+    /// <summary>
+    /// プレイヤーの向いてる方向
+    /// </summary>
+    /// <returns>プレイヤーの向いてる方向</returns>
+    private float getPlayerDirection()
+    {
+        return this.gameObject.transform.localScale.x;
+    }
+     /// <summary>
+    /// 投げる方向を求める
+    /// </summary>
+    void ThrowDirection()
+    {
+        throwDirection = new Vector2(getPlayerDirection(), 1.0f);
+    }
+   
 
+
+
+    void PlayerThrowUpdate()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (!isTake)
+            {
+                return;
+            }
+            isTake = false;
+            isThrow = true;
+            Rigidbody2D rigidbody2 = nextPlayer.GetComponent<Rigidbody2D>();
+            ThrowDirection();
+            rigidbody2.velocity = throwDirection * power;
+        }
+        //拾える状態か        
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (!canPick)
+            {
+                return;
+            }
+            isTake = true;
+            canPick = false;
+        }
+        if (isTake)
+        {
+            nextPlayer.transform.position = new Vector2(
+                this.gameObject.transform.position.x + diffFriend.x,
+                this.gameObject.transform.position.y + diffFriend.y);
+           
+        }
+
+        Debug.Log(canPick);
+    }
+    
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+
+        if (collision.gameObject.CompareTag("CanThrow"))
+        {
+            if (collision.gameObject == charaList[PlayerIndx])
+            {
+                return;
+            }
+            Debug.Log("aaaaa");
+            GetComponent<BoxCollider2D>();
+            canPick = true;
+            nextPlayer = collision.gameObject;
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("CanThrow"))
+        {
+            canPick = false;
+        }
+      
+    }
 
 }
