@@ -7,10 +7,10 @@ using Unity.VisualScripting;
 
 public class PlayerAppearance : MonoBehaviour
 {
-   // インスタンス化するPrefabオブジェクトをアサインします。
-    public GameObject prefab;
+    PlayerMove pmove;
 
-    GameObject obj;
+   // インスタンス化するobjオブジェクトをアサインします。
+    public  GameObject obj;
 
     // 親オブジェクトのトランスフォームをアサインします。
     public Transform parentTran;
@@ -19,6 +19,17 @@ public class PlayerAppearance : MonoBehaviour
     public int prefabNum;
     private void Start()
     {
-        obj.transform.SetParent(parentTran);//objectの親オブジェクトをparent.transformにしている
+        obj.transform.SetParent(parentTran);
+        //objectの親オブジェクトをparent.transformにしている
+       
     }
+    private void Update()
+    {
+       if(Input.GetKeyDown(KeyCode.Z))
+        {
+            pmove=GameObject.Find("Playr").GetComponent<PlayerMove>();//スクリプトから他のGameObjectにアタッチされたスクリプトを取得する
+            //prefab = rigid2D.velocity;
+        }
+    }
+
 }
