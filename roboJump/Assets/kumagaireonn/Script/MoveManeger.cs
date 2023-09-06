@@ -151,13 +151,9 @@ public class MoveManeger : MonoBehaviour
     void ChangeCharacter(int tempNowChara)
     {
         //　現在操作しているキャラクターを動かなくする
-        charaList[tempNowChara].GetComponent<MoveManeger>();
-
-
-      
+        charaList[tempNowChara].GetComponent<MoveManeger>();      
         //　次のキャラクターの番号を設定
         PlayerIndx = nextPlayer.GetComponent< MoveManeger>().thisIndx;
-
         AllFalseControl(PlayerIndx);
     }
 
@@ -168,10 +164,14 @@ public class MoveManeger : MonoBehaviour
             if (i == tempNowChara)
             {
                 charaList[i].GetComponent<MoveManeger>().ChangeControl(true);
+                charaList[i].GetComponent<CircleCollider2D>().enabled = true;
+                charaList[i].gameObject.tag = "Player";
                 continue;
             }
                 
         charaList[i].GetComponent<MoveManeger>().ChangeControl(false);
+            charaList[i].gameObject.tag = "CanThrow";
+            charaList[i].GetComponent<CircleCollider2D>().enabled = false;
         }
     }
     /// <summary>
@@ -227,10 +227,8 @@ public class MoveManeger : MonoBehaviour
 
         Debug.Log(canPick);
     }
-    
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-
         if (collision.gameObject.CompareTag("CanThrow"))
         {
             if (collision.gameObject == charaList[PlayerIndx])
@@ -243,13 +241,11 @@ public class MoveManeger : MonoBehaviour
             nextPlayer = collision.gameObject;
         }
     }
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("CanThrow"))
         {
             canPick = false;
         }
-      
     }
-
 }
