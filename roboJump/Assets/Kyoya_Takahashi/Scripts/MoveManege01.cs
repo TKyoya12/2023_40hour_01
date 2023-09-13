@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-/*
+
 public class MoveManege01 : MonoBehaviour
 {
     //インスペクタ表示変数
@@ -25,7 +25,6 @@ public class MoveManege01 : MonoBehaviour
     [SerializeField]
     private List<GameObject> charaList;
     public static GameObject ThrowObject;
-
 
     //コンポーネント保存
     private Rigidbody2D rigid2D;
@@ -137,6 +136,5 @@ public class MoveManege01 : MonoBehaviour
 
 
     }
-  
+
 }
-  */

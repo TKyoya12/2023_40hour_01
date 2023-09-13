@@ -4,14 +4,18 @@ using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.LowLevel;
+using UnityEngine.SceneManagement;
 
 public class MoveManeger : MonoBehaviour
 {
     //インスペクタ表示変数
     [SerializeField] private float moveSpeed; //移動力
+    [SerializeField] private float groundOffsectx;
+    [SerializeField] private float groundOffsecty;
+    [SerializeField] private LayerMask groundLayer; //地面のレイヤーマスク
 
-
-     bool isActive = false;//操作されているかどうか/false;していない/true:している
+   
+    bool isActive = false;//操作されているかどうか/false;していない/true:している
     private enum Direction
     {
         Stop,   //止まっている
@@ -27,10 +31,17 @@ public class MoveManeger : MonoBehaviour
     public static GameObject ThrowObject;
     public int PlayerIndx = -1;
 
+    public Random.State random;
+    
     //コンポーネント保存
     private Rigidbody2D rigid2D;
+    private CapsuleCollider2D CapsuleCollider2D;
+
+
+    //コンポーネント保存
     //　現在キャラクターを操作出来るかどうか
     private bool control;
+    private Vector3 groundCheckOffset;                //接地判定用オフセット値
 
 
     //プライベート変数
@@ -67,13 +78,33 @@ public class MoveManeger : MonoBehaviour
     {
         //コンポーネント取得
         rigid2D = GetComponent<Rigidbody2D>();
+      
         //　最初の操作キャラクターを0番目のキャラクターにする
         PlayerIndx = GameObject.Find("Player").GetComponent<MoveManeger>().thisIndx;
+        Debug.Log(PlayerIndx);
+       
+        charaList[PlayerIndx].GetComponent<MoveManeger>().ChangeControl(true);
         
-            charaList[PlayerIndx].GetComponent<MoveManeger>().ChangeControl(true);
         // Rigidbodyコンポーネントを取得する
         rb = GetComponent<Rigidbody2D>();
         rb.velocity = Vector3.zero;//速度
+
+
+        rb = GetComponent<Rigidbody2D>();
+
+
+        //コンポーネント取得
+        rigid2D = GetComponent<Rigidbody2D>();
+        CapsuleCollider2D = GetComponent<CapsuleCollider2D>();
+
+      
+
+        //接地判定用オフセット値を計算
+        var centerPos = CapsuleCollider2D.offset;       //コライダーの中心座標
+        var buttomOffset = CapsuleCollider2D.size.y * 0.5f;    //コライダーの縦半分サイズ
+        groundCheckOffset = new Vector3(0f,
+                                        centerPos.y - buttomOffset,
+                                        0f);
     }
 
     // Update is called once per frame
@@ -83,14 +114,19 @@ public class MoveManeger : MonoBehaviour
         if (!control)
         {
             return;
+            
         }
 
+        //Debug.Log(control);
         PlayerThrowUpdate();
-        Debug.Log(nextPlayer);
+       // Debug.Log(nextPlayer);
+
         if (isThrow)
         {
             ChangeCharacter(nowChara);
-            Debug.Log(isThrow);
+            //仮で入れる
+          //  random.
+           // Debug.Log(isThrow);//true
         }
         float inputH = 0;
 
@@ -116,7 +152,8 @@ public class MoveManeger : MonoBehaviour
             //止まっている
             direction = Direction.Stop;
         }
-  
+
+
     }
     private void FixedUpdate()
     {
@@ -146,6 +183,9 @@ public class MoveManeger : MonoBehaviour
     {
         control = controlFlag;
 
+        //// 位置 X だけ固定
+        //rigid2D.constraints = RigidbodyConstraintsD.FreezePositionX;
+        //transform.rigidbody2D.constraints = RigidbodyConstraints.FreezePosition;
     }
     //　操作キャラクター変更メソッド
     void ChangeCharacter(int tempNowChara)
@@ -153,12 +193,11 @@ public class MoveManeger : MonoBehaviour
         //　現在操作しているキャラクターを動かなくする
         charaList[tempNowChara].GetComponent<MoveManeger>();
 
-
-      
         //　次のキャラクターの番号を設定
-        PlayerIndx = nextPlayer.GetComponent< MoveManeger>().thisIndx;
+        PlayerIndx = nextPlayer.GetComponent<MoveManeger>().thisIndx;
 
         AllFalseControl(PlayerIndx);
+        Debug.Log(PlayerIndx);//全体3/0
     }
 
     void AllFalseControl(int tempNowChara)
@@ -172,6 +211,8 @@ public class MoveManeger : MonoBehaviour
             }
                 
         charaList[i].GetComponent<MoveManeger>().ChangeControl(false);
+            charaList[PlayerIndx].GetComponent<MoveManeger>().ChangeControl(true);//1
+           // Debug.Log(charaList[PlayerIndx]);
         }
     }
     /// <summary>
@@ -189,9 +230,36 @@ public class MoveManeger : MonoBehaviour
     {
         throwDirection = new Vector2(getPlayerDirection(), 1.0f);
     }
-   
 
 
+    private bool IsGround()
+    {
+        bool IsGround = false;
+
+        //============
+        //始点と終点を作成
+        //============
+        //プレイヤーの中心から左へずれる場所
+        Vector3 lsftStartPoint = groundCheckOffset + transform.position - Vector3.right * groundOffsectx;
+
+        //プレイヤーの中心から右へずれる場所
+        Vector3 rightStartPoint = groundCheckOffset + transform.position - Vector3.right * groundOffsectx;
+
+        //プレイヤーの中心から下へずれる場所
+        Vector3 endPoint = groundCheckOffset + transform.position - Vector3.up * groundOffsecty;
+
+        //各線分と指定したレイヤーが交差しているかを判定
+
+        IsGround = Physics2D.Linecast(lsftStartPoint, endPoint, groundLayer)
+                 || Physics2D.Linecast(rightStartPoint, endPoint, groundLayer);
+
+        //線分を表示（デバック）
+        Debug.DrawLine(lsftStartPoint, endPoint, Color.red);
+        Debug.DrawLine(rightStartPoint, endPoint, Color.red);
+        //接地状態を表示（デバック）
+        Debug.Log("IsGround{isGround}");
+        return IsGround;
+    }
 
     void PlayerThrowUpdate()
     {
@@ -203,6 +271,12 @@ public class MoveManeger : MonoBehaviour
             }
             isTake = false;
             isThrow = true;
+
+            if(PlayerIndx==1)
+            {
+                Debug.Log("左クリック");
+            }
+
             Rigidbody2D rigidbody2 = nextPlayer.GetComponent<Rigidbody2D>();
             ThrowDirection();
             rigidbody2.velocity = throwDirection * power;
@@ -216,7 +290,7 @@ public class MoveManeger : MonoBehaviour
             }
             isTake = true;
             canPick = false;
-            Debug.Log(isThrow);
+            //Debug.Log(isThrow);//false
         }
         if (isTake)
         {
@@ -225,7 +299,7 @@ public class MoveManeger : MonoBehaviour
                 this.gameObject.transform.position.y + diffFriend.y);
         }
 
-        Debug.Log(canPick);
+        //Debug.Log(canPick);
     }
     
     private void OnCollisionEnter2D(Collision2D collision)
@@ -235,12 +309,18 @@ public class MoveManeger : MonoBehaviour
         {
             if (collision.gameObject == charaList[PlayerIndx])
             {
+                Debug.Log(PlayerIndx);
                 return;
             }
-            Debug.Log("aaaaa");
+            //Debug.Log("aaaaa");
             GetComponent<BoxCollider2D>();
             canPick = true;
             nextPlayer = collision.gameObject;
+            //if(PlayerIndx != -1)
+            //{
+            //    Debug.Log(PlayerIndx);
+            //}
+            
         }
     }
     private void OnCollisionExit2D(Collision2D collision)

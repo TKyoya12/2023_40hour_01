@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 87984477}
   - component: {fileID: 87984476}
   - component: {fileID: 87984478}
+  - component: {fileID: 87984479}
   m_Layer: 0
   m_Name: Circle
   m_TagString: CanThrow
@@ -260,7 +261,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
+  groundOffsectx: 0
+  groundOffsecty: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
   PlayerIndx: -1
+  random:
+    s0: 0
+    s1: 0
+    s2: 0
+    s3: 0
+--- !u!70 &87984479
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87984473}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1, y: 1}
+  m_Direction: 0
 --- !u!1 &300676683
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,6 +482,8 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420035}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -546,6 +575,34 @@ MonoBehaviour:
   cameraOrgPos: {x: 0, y: 0, z: -10}
   camaraMaxPos: {x: 15.49, y: 26.74}
   camaraMinPos: {x: -5, y: -5}
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef4f032eda1eaf48b139312d71884da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 519420031}
+  player: {fileID: 1163584219}
+  parabola: {fileID: 300676685}
+--- !u!114 &519420035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e861e52c6cc3165429a44ae89b7412f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1163584219}
 --- !u!1 &759781892
 GameObject:
   m_ObjectHideFlags: 0
@@ -1746,7 +1803,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1163584219
 GameObject:
@@ -1762,6 +1819,8 @@ GameObject:
   - component: {fileID: 1163584224}
   - component: {fileID: 1163584228}
   - component: {fileID: 1163584229}
+  - component: {fileID: 1163584230}
+  - component: {fileID: 1163584231}
   m_Layer: 0
   m_Name: Player
   m_TagString: CanThrow
@@ -1835,7 +1894,7 @@ Transform:
   m_Children:
   - {fileID: 1704000329}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1163584224
 Rigidbody2D:
@@ -1887,7 +1946,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 7.16
+  groundOffsectx: 1.65
+  groundOffsecty: 2.49
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   PlayerIndx: -1
+  random:
+    s0: 0
+    s1: 0
+    s2: 0
+    s3: 0
 --- !u!114 &1163584229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1900,7 +1969,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c645d3e3671c3843b4b292d7371cd61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 0}
+--- !u!114 &1163584230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163584219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c907f091d4b6014f9183208705e1352, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &1163584231
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163584219}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7a76ecf56dc540448a3aebded8a34a61, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1314646337
 GameObject:
   m_ObjectHideFlags: 0
@@ -1995,7 +2096,7 @@ RectTransform:
   m_Children:
   - {fileID: 311325491}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
